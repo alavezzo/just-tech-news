@@ -35,7 +35,7 @@ User.init(
             allowNull: false,
             // there cannot be any duplicate email values in this table
             unique: true,
-           // if allowNull is set to false, we can run our data through validators before creating the table data
+            // if allowNull is set to false, we can run our data through validators before creating the table data
             validate: {
                 isEmail: true
             }
@@ -51,21 +51,21 @@ User.init(
         }
     },
     {
-        hooks:{
+        hooks: {
             // set up beforeCreate lifecycle "hook" functionality
             async beforeCreate(newUserData) {
                 newUserData.password = await bcrypt.hash(newUserData.password, 10).then(newUserData => {
-                return newUserData
+                    return newUserData
                 });
             },
             // set up beforeUpdate lifecycle "hook" functionality 
-            async  beforeUpdate(updatedUserData) {
+            async beforeUpdate(updatedUserData) {
                 updatedUserData.password = await bcrypt.hash(updatedUserData.password, 10);
                 return updatedUserData;
             }
         },
         //  TABLE CONFIGURATION OPTIONS GO HERE (https://sequelize.org/v5/manual/models-definition.html#configuration)
-        
+
         // pass in our inported sequelize connection (the direct connection to our database)
         sequelize,
         // don't automatically create createdAt/updatedAt timestamp fields
