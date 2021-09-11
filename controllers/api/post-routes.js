@@ -7,7 +7,12 @@ const withAuth = require('../../utils/auth');
 router.get('/', (req, res) => {
     Post.findAll({
         order: [['created_at', 'DESC']],
-        attributes: ['id', 'post_url', 'title', 'created_at', [sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']],
+        attributes: [
+            'id', 
+            'post_url', 
+            'title', 
+            'created_at', 
+            [sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']],
         include: [
             {
                 model: Comment,
@@ -30,7 +35,7 @@ router.get('/', (req, res) => {
         .catch(err => {
             console.log(err);
             res.status(500).json(err);
-        })
+        });
 });
 
 router.get('/:id', (req, res) => {
@@ -81,10 +86,6 @@ router.post('/', withAuth, (req, res) => {
 });
 
 router.put('/upvote', withAuth, (req, res) => {
-    // make sure the session exists first
-    if (req.session) {
-        // pass session id along with all destructured properties on req.body
-
       // custom static method created in models/Post.js
       Post.upvote({ ...req.body, user_id: req.session.user_id}, { Vote, Comment, User })
       .then(updatedPostData => res.json(updatedPostData))
@@ -92,7 +93,6 @@ router.put('/upvote', withAuth, (req, res) => {
           console.log(err);
           res.status(400).json(err);
       });
-    }
   
 });
 
